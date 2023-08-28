@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Drone Discussion Presentation</title>
+    <meta charset="utf-8">
+    <style>
+      @import url(https://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+      @import url(https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+      @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+
+      body { font-family: 'Droid Serif'; }
+      h1, h2, h3 {
+        font-family: 'Yanone Kaffeesatz';
+        font-weight: normal;
+      }
+      .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+    </style>
+  </head>
+  <body>
+    <textarea id="source">
+
+class: center, middle
+
+# Fort Huachuca East Range Reflections: Programs, Compute Resources, and Lessons Learned
+
+## Devin Bayly
+
+Data and Visualization Consultant Research Technologies UArizona
+
+---
+
+# Agenda
+
+1. Personal Background
+2. Compute Access
+3. Project Experience
+4. Questions
+
+---
+
+# Personal Background
+
+* Math and Neuroscience
+* Visualization as retrospective
+* Web visualization (Mozilla Iodide, early Observable Competitor)
+* UA HPC
+* **Note: No photogrammetry education!**
+
+---
+
+# RTDV
+
+* Services
+    * DCC
+    * High Performance Visualization
+    * Visualization adjacent support (project collaborations) 
+* Past Projects
+    * https://rtdatavis.github.io/
+    * ["Tell it to the river"](https://www.samaalshaibi.com/exhibitions-1/tell-it-to-the-river-at-maraya)
+    * ["Stellarscape"](http://www.stellarscape.org/)
+    * [PhytoOracle VR SXSW](https://sxsw.arizona.edu/person/phytooracle-2-vr)
+
+---
+
+# Getting in touch
+
+* vislab-consult@list.arizona.edu
+* [Data & Vis Tuesdays 9-11am](https://libcal.library.arizona.edu/event/10712321)
+* [Code commons Wednesdays 2-6pm](https://codecommons.net/)
+
+
+# Support material
+
+* [HPC visualization](https://public.confluence.arizona.edu/display/UAHPC/Visualization)
+* [Blender USD Point Cloud support](https://public.confluence.arizona.edu/display/UAHPC/Visualization)
+* Lidar processing OSG science gateway (underway) 
+
+---
+# Compute Access: On Campus
+
+* [HPC](https://public.confluence.arizona.edu/display/UAHPC/Account+Creation)
+    * Workshops updates by email
+* [Cyverse DE](https://cyverse.org/discovery-environment)
+* [Visualization Wall](https://lib.arizona.edu/catalyst/spaces/data-studio)
+* [Catalyst Studios](https://lib.arizona.edu/catalyst)
+* [Sensor Lab](https://sensorlab.arizona.edu/)
+
+---
+# Compute Access: Off Campus Specific Programs
+
+* RMACC 
+    * [Alpine CU Boulder]( https://www.colorado.edu/rc/alpine)
+    * [Cumulus (Persistent Cloud Compute)](https://www.colorado.edu/rc/resources/CUmulus)
+* [OSG](https://osg-htc.org/)
+* [Jetstream 2]( https://jetstream-cloud.org/index.html)
+    * [exosphere]( https://jetstream2.exosphere.app/exosphere/home) 
+
+---
+# Compute Access: Off Campus General
+
+* [Campus Champions](https://campuschampions.cyberinfrastructure.org/)
+* [ACCESS](https://access-ci.org/)
+    * My allocation (demo)
+    * Assistance writing Explore Allocation
+
+---
+# Fort Huachuca Project: Background
+
+* Supporting students and PI from Digital Humanities
+* Reconstructing the east range 
+* ~145km^2 ( yikes! )
+* Wingtra one (no ppk)
+* 1cm resolution
+* \>60k images
+* Open Drone Map
+* Desired outputs 
+    * DEM & Ortho
+    * Pointcloud (.laz)
+    * 3d textured models
+    * VR assets
+    * OGC 3d Tiles
+    * (different departments want different outputs)
+* [project repo](https://github.com/DevinBayly/FT_photogrammetry)
+    * includes qgis and odm scripts
+    * under development
+
+---
+# Fort Huachuca Project: Workflows
+
+* WebODM on HPC (vanilla)
+    * Converted Docker Compose to Singularity instances
+    * ElGato 16 core 12 hour instance, 200-800 images success
+    * pro:
+        * using OOD remote desktop can teach students to use
+    * con:
+        * manual submission will not scale to image numbers we have
+
+---
+# Fort Huachuca Project: Workflows
+
+* ODM Split Merge Cluster (sm-cluster)
+    * [support doc](https://docs.opendronemap.org/large/)
+    * Setup 8 worker nodes
+    * put their configuration info in cluster-odm
+    * launch cluster-odm
+    * launch odm container with `--split 200` `--sm-cluster http://localhost:3000`
+    * pro:
+        * can  point at entire folder of images and start processing programmatically
+    * con:
+        * Image products depend on flight pattern (long and narrow feature artifacts more than square tile)
+        * unpredictable OOMs and allocation time limits exceeded
+        * no all image products can be merged (no 3d)
+---
+# Fort Huachuca Project: Workflows
+
+* QGIS group segmentation SLURM HPC ODM
+    * establish tiled overlapping groups of images from the different flights
+    * export a large JSON with those groups
+    * Implement a python script that launches HPC tasks (12-16 hours) aimed at processing each group separately
+    * leverage .las information for aligning the 3d models
+    * pro:
+        * reliably completes without OOM, and/or timeouts
+    * con: 
+        * hard on the presentation end of the pipeline
+---
+# Fort Huachuca Project: Difficulties
+
+* Missing files
+    * Experiencing a lot of problems filling in sections of map
+* Storage issues
+    * 10TB runs out fast
+* ODM requires 
+
+
+
+
+
+
+
+
+
+    </textarea>
+    <script src="https://remarkjs.com/downloads/remark-latest.min.js">
+    </script>
+    <script>
+      var slideshow = remark.create();
+    </script>
+  </body>
+</html>
